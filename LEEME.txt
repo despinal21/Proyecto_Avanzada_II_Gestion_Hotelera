@@ -1,0 +1,11 @@
+La siguiente carpeta contiene el proyecto de gestión hotelera 
+sus componentes del proyecto trabajado en apache NetBeans 
+el script de la base de datos y la documentación del proyecto.
+
+Documentación en un Archivo .docx
+BD_sistema_de_hotel Archivo .SQL
+GestionHotelera Carpeta completa Proyect NetBeans
+
+El programa fue realizado por mi persona y con ayuda debido a que mi pareja de equipo declino y lo hice solo.
+
+Falto un poco mas de funcionalidad pero ya no me dio tiempo.

@@ -19,13 +19,14 @@ import javax.swing.JOptionPane;
  */
 public class Reserva extends javax.swing.JFrame {
 private Connection con;
+
 public Reserva() {
         initComponents();
-        // Conecta a la base de datos
+       
         Conexion conexion = new Conexion();
         con = conexion.estableceConexion();
         
-        // Carga los datos al iniciar la ventana
+        
         cargarHuespedes();
         cargarHabitacionesDisponibles();
     }
@@ -111,9 +112,15 @@ public Reserva() {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addGap(32, 32, 32)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jComboBox2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -217,10 +224,6 @@ public Reserva() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox2ActionPerformed
-
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         Habitaciones ventanaHabitaciones = new Habitaciones();
     ventanaHabitaciones.setVisible(true);
@@ -233,6 +236,14 @@ public Reserva() {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
       guardarReserva();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox2ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -307,7 +318,7 @@ public void cargarHuespedes() {
     }
 }
 
-// Carga las habitaciones disponibles en el jComboBox2
+
 public void cargarHabitacionesDisponibles() {
     String sql = "SELECT id_habitacion FROM habitaciones WHERE estado = 'disponible'";
     try {
@@ -323,27 +334,27 @@ public void cargarHabitacionesDisponibles() {
 }
 public void guardarReserva() {
     try {
-        // Obtenemos los valores de los componentes de la UI
+        
         String nombreHuesped = jComboBox1.getSelectedItem().toString();
         String idHabitacion = jComboBox2.getSelectedItem().toString();
         java.util.Date fechaEntrada = jDateChooser2.getDate();
         java.util.Date fechaSalida = jDateChooser3.getDate();
         
-        // Validamos que los campos no estén vacíos
+        
         if (nombreHuesped == null || idHabitacion == null || fechaEntrada == null || fechaSalida == null) {
             JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.");
             return;
         }
 
-        // Convertimos las fechas al formato SQL
+       
         SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
         String fechaEntradaSQL = formatoFecha.format(fechaEntrada);
         String fechaSalidaSQL = formatoFecha.format(fechaSalida);
         
-        // Obtenemos el ID del huésped
+        
         String idHuesped = obtenerIdHuesped(nombreHuesped);
 
-        // Preparamos la consulta SQL para insertar la reserva
+        
         String sql = "INSERT INTO reservas (id_huesped, id_habitacion, fecha_entrada, fecha_salida) VALUES (?, ?, ?, ?)";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setLong(1, Long.parseLong(idHuesped));
@@ -354,10 +365,10 @@ public void guardarReserva() {
         ps.executeUpdate();
         JOptionPane.showMessageDialog(this, "Reserva guardada exitosamente.");
         
-        // Opcional: Actualizar el estado de la habitación a "ocupado"
+        
         actualizarEstadoHabitacion(idHabitacion, "ocupada");
 
-        this.dispose(); // Cierra la ventana después de guardar
+        this.dispose(); 
     } catch (SQLException e) {
         JOptionPane.showMessageDialog(this, "Error al guardar la reserva: " + e.getMessage());
     } catch (NumberFormatException e) {
@@ -365,7 +376,7 @@ public void guardarReserva() {
     }
 }
 
-// Método auxiliar para obtener el ID del huésped a partir del nombre
+
 private String obtenerIdHuesped(String nombreCompleto) throws SQLException {
     String[] partesNombre = nombreCompleto.split(" ");
     String nombre = partesNombre[0];
@@ -382,7 +393,7 @@ private String obtenerIdHuesped(String nombreCompleto) throws SQLException {
     return null;
 }
 
-// Método auxiliar para actualizar el estado de la habitación
+
 private void actualizarEstadoHabitacion(String idHabitacion, String estado) throws SQLException {
     String sql = "UPDATE habitaciones SET estado = ? WHERE id_habitacion = ?";
     PreparedStatement ps = con.prepareStatement(sql);

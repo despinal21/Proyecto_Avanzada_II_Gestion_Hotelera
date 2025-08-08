@@ -219,21 +219,21 @@ public class Huespedes extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
       Agregar_Editar_Huesped ventanaAgregar = new Agregar_Editar_Huesped(this, true, this);
-    // Hacemos visible la nueva ventana.
+   
     ventanaAgregar.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-      // Obtenemos la fila seleccionada
+      
     int filaSeleccionada = Table_Huespedes.getSelectedRow();
 
-    // Verificamos que se haya seleccionado una fila
+    
     if (filaSeleccionada == -1) {
         JOptionPane.showMessageDialog(this, "Por favor, seleccione un huésped para editar.");
         return;
     }
 
-    // Obtenemos los datos de la fila seleccionada
+    
     DefaultTableModel modelo = (DefaultTableModel) Table_Huespedes.getModel();
    String id = modelo.getValueAt(filaSeleccionada, 0).toString(); 
     String nombre = modelo.getValueAt(filaSeleccionada, 1).toString();
@@ -242,7 +242,7 @@ public class Huespedes extends javax.swing.JFrame {
     String telefono = modelo.getValueAt(filaSeleccionada, 4).toString();
     String direccion = modelo.getValueAt(filaSeleccionada, 5).toString();
 
-    // Creamos la ventana de agregar/editar y le pasamos los datos
+    
     Agregar_Editar_Huesped ventanaEditar = new Agregar_Editar_Huesped(this, true, this);
    ventanaEditar.mostrarDatosHuesped(id, nombre, apellido, correo, telefono, direccion);
     ventanaEditar.setVisible(true);
@@ -253,47 +253,37 @@ public class Huespedes extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-      // Crea una nueva instancia de la ventana Pago
-    Pago ventanaPago = new Pago();
-
-    // Hace visible la nueva ventana de pago
+      
+    Pago ventanaPago = new Pago(); 
     ventanaPago.setVisible(true);
 
-    // Opcional: Si quieres cerrar la ventana actual de Huespedes,
-    // puedes usar la siguiente línea:
-    //this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // Crea una nueva instancia de la ventana Reserva
-    Reserva ventanaReserva = new Reserva();
-
-    // Hace visible la nueva ventana de reserva
-    ventanaReserva.setVisible(true);
-
-    // Opcional: Si quieres cerrar la ventana actual de Huespedes,
-    // puedes usar la siguiente línea:
-    //this.dispose();
+         
+    GestionReserva ventanaGestionReserva = new GestionReserva();
+    ventanaGestionReserva.setVisible(true);
+    this.dispose();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         int filaSeleccionada = Table_Huespedes.getSelectedRow();
 
-    // Verificamos que se haya seleccionado una fila
+    
     if (filaSeleccionada == -1) {
         JOptionPane.showMessageDialog(this, "Por favor, seleccione un huésped para eliminar.");
         return;
     }
 
-    // Pedimos confirmación al usuario antes de eliminar
+   
     int confirmacion = JOptionPane.showConfirmDialog(this, "¿Está seguro de que desea eliminar este huésped?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
 
     if (confirmacion == JOptionPane.YES_OPTION) {
-        // Obtenemos el ID del huésped de la primera columna de la tabla
+       
         DefaultTableModel modelo = (DefaultTableModel) Table_Huespedes.getModel();
         String idHuesped = modelo.getValueAt(filaSeleccionada, 0).toString();
 
-        // Llamamos a un método para ejecutar la eliminación
+       
         eliminarHuesped(idHuesped);
     }
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -349,27 +339,26 @@ public class Huespedes extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 public void mostrarHuespedes() {
-    // Obtenemos el modelo de la tabla para poder manipular sus filas
+    
     DefaultTableModel modelo = (DefaultTableModel) Table_Huespedes.getModel();
-    // Limpiamos la tabla para que no se repitan los datos
+   
     modelo.setRowCount(0);
 
-    // Definimos la consulta SQL para traer todos los datos de la tabla 'huespedes'
     String sql = "SELECT * FROM huespedes";
 
-    // Creamos una nueva conexión
+    
     Conexion conexion = new Conexion();
     Connection con = conexion.estableceConexion();
 
     try {
-        // Preparamos la consulta para ser ejecutada
+       
         PreparedStatement ps = con.prepareStatement(sql);
-        // Ejecutamos la consulta y obtenemos los resultados
+       
         ResultSet rs = ps.executeQuery();
 
-        // Recorremos cada una de las filas que nos devuelve la base de datos
+       
         while (rs.next()) {
-            Object[] fila = new Object[6]; // Creamos un arreglo para 6 columnas
+            Object[] fila = new Object[6]; 
             fila[0] = rs.getString("id_huesped");
             fila[1] = rs.getString("nombre");
             fila[2] = rs.getString("apellido");
@@ -377,13 +366,12 @@ public void mostrarHuespedes() {
             fila[4] = rs.getString("telefono");
             fila[5] = rs.getString("direccion");
 
-            // Agregamos la fila al modelo de la tabla
-            modelo.addRow(fila);
+           modelo.addRow(fila);
         }
     } catch (SQLException e) {
         System.out.println("Error al cargar los huéspedes: " + e.getMessage());
     } finally {
-        // Cerramos la conexión para liberar recursos
+       
         if (con != null) {
             try {
                 con.close();
@@ -394,7 +382,7 @@ public void mostrarHuespedes() {
     }
 }
 public void eliminarHuesped(String idHuesped) {
-    // Llama a este método para eliminar primero las reservas
+    
     eliminarReservasDeHuesped(idHuesped);
 
     Conexion conexion = new Conexion();

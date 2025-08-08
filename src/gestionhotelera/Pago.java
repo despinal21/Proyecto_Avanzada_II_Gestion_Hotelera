@@ -5,11 +5,18 @@
  */
 package gestionhotelera;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author David Espinal
  */
 public class Pago extends javax.swing.JFrame {
+    private Connection con;
 
     /**
      * Creates new form Pago
@@ -17,6 +24,39 @@ public class Pago extends javax.swing.JFrame {
     public Pago() {
         initComponents();
     }
+   
+public Pago(Connection conexion) {
+    this.con = conexion;
+    initComponents();
+    cargarReservas();
+    cargarMetodosPago();
+}
+
+private void cargarReservas() {
+    String sql = "SELECT id_reserva, id_huesped FROM reservas WHERE estado = 'activa'";
+    try {
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        jComboBox1.removeAllItems();
+        jComboBox1.addItem("Seleccione una reserva"); // Opción por defecto
+        while (rs.next()) {
+            String idReserva = rs.getString("id_reserva");
+            String idHuesped = rs.getString("id_huesped");
+            String displayText = "Reserva " + idReserva + " (Huesped: " + idHuesped + ")";
+            jComboBox1.addItem(displayText);
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar las reservas: " + e.getMessage());
+    }
+}
+
+private void cargarMetodosPago() {
+    jComboBox2.removeAllItems();
+    jComboBox2.addItem("Tarjeta de Credito");
+    jComboBox2.addItem("Transferencia Bancaria");
+    jComboBox2.addItem("Efectivo");
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -161,7 +201,7 @@ public class Pago extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+     
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -219,4 +259,5 @@ public class Pago extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
+
 }

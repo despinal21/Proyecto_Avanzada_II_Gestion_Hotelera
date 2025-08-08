@@ -5,17 +5,29 @@
  */
 package gestionhotelera;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Vector;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author David Espinal
  */
 public class Habitaciones extends javax.swing.JFrame {
-
+private Connection con;
     /**
      * Creates new form Habitaciones
      */
     public Habitaciones() {
         initComponents();
+        
+        Conexion conexion = new Conexion();
+        con = conexion.estableceConexion();
+        cargarTabla(); 
     }
 
     /**
@@ -89,24 +101,24 @@ public class Habitaciones extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "CATEGORIA", "DISPONIBLE", "ESTADO"
+                "HABITACION", "TIPO", "PRECIO", "CAPACIDAD", "ESTADO"
             }
         ));
         jTable1.setPreferredSize(new java.awt.Dimension(450, 240));
@@ -192,19 +204,71 @@ public class Habitaciones extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+            JOptionPane.showMessageDialog(this, "La función de agregar habitaciones ha sido deshabilitada.");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+
+    int filaSeleccionada = jTable1.getSelectedRow();
+    if (filaSeleccionada == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, seleccione una habitación para editar.");
+        return;
+    }
+
+    try {
+        
+        String idHabitacion = jTable1.getValueAt(filaSeleccionada, 0).toString();
+
+        
+        String nuevaCapacidad = JOptionPane.showInputDialog(this, "Ingrese la nueva capacidad:");
+        String nuevoEstado = JOptionPane.showInputDialog(this, "Ingrese el nuevo estado (disponible/ocupada/mantenimiento):");
+
+       
+        if (nuevaCapacidad != null && nuevoEstado != null) {
+            String sql = "UPDATE habitaciones SET capacidad = ?, estado = ? WHERE id_habitacion = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, Integer.parseInt(nuevaCapacidad));
+            ps.setString(2, nuevoEstado);
+            ps.setInt(3, Integer.parseInt(idHabitacion));
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Capacidad y estado de la habitación actualizados exitosamente.");
+            cargarTabla(); 
+        }
+    } catch (SQLException | NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Error al actualizar la habitación: " + e.getMessage());
+    }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+        
+        cargarTabla();
+        JOptionPane.showMessageDialog(this, "Tabla de habitaciones actualizada.");
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+        
+        int filaSeleccionada = jTable1.getSelectedRow();
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione una habitación para eliminar.");
+            return;
+        }
+
+        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Está seguro de que desea eliminar esta habitación?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        if (confirmacion != JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        try {
+            String idHabitacion = jTable1.getValueAt(filaSeleccionada, 0).toString();
+            String sql = "DELETE FROM habitaciones WHERE id_habitacion = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, Integer.parseInt(idHabitacion));
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Habitación eliminada exitosamente.");
+            cargarTabla(); // Recargar la tabla
+        } catch (SQLException | NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Error al eliminar la habitación: " + e.getMessage());
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -259,4 +323,33 @@ public class Habitaciones extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+
+    public void cargarTabla() {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0); 
+        model.setColumnCount(0);
+        model.addColumn("HABITACION");
+        model.addColumn("TIPO");
+        model.addColumn("PRECIO");
+        model.addColumn("CAPACIDAD");
+        model.addColumn("ESTADO");
+        
+        String sql = "SELECT id_habitacion, tipo, precio, capacidad, estado FROM habitaciones";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                Vector v = new Vector();
+                v.add(rs.getString("id_habitacion"));
+                v.add(rs.getString("tipo"));
+                v.add(rs.getString("precio"));
+                v.add(rs.getString("capacidad"));
+                v.add(rs.getString("estado"));
+                model.addRow(v);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar las habitaciones: " + e.getMessage());
+        }
+    }
 }

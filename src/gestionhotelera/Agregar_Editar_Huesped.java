@@ -322,10 +322,7 @@ public class Agregar_Editar_Huesped extends javax.swing.JDialog {
     private javax.swing.JLabel jlabel;
     // End of variables declaration//GEN-END:variables
 public void guardarHuesped() {
-    // Verificamos si el campo de ID tiene un valor. Si tiene, significa que estamos editando.
     String idString = jTextField6.getText();
-
-    // Obtenemos los valores de los campos de texto
     String nombre = jTextField2.getText();
     String apellido = jTextField1.getText();
     String correo = jTextField3.getText();
@@ -342,7 +339,7 @@ public void guardarHuesped() {
     PreparedStatement ps = null;
 
     try {
-        if (idString.isEmpty()) { // Si el ID está vacío, es un nuevo huésped
+        if (idString.isEmpty()) { 
             String sql = "INSERT INTO huespedes (nombre, apellido, correo_electronico, telefono, direccion) VALUES (?, ?, ?, ?, ?)";
             ps = con.prepareStatement(sql);
             ps.setString(1, nombre);
@@ -350,7 +347,7 @@ public void guardarHuesped() {
             ps.setString(3, correo);
             ps.setString(4, telefono);
             ps.setString(5, direccion);
-        } else { // Si hay un ID, es una edición
+        } else { 
             String sql = "UPDATE huespedes SET nombre=?, apellido=?, correo_electronico=?, telefono=?, direccion=? WHERE id_huesped=?";
             ps = con.prepareStatement(sql);
             ps.setString(1, nombre);
@@ -366,7 +363,7 @@ public void guardarHuesped() {
         if (filasAfectadas > 0) {
             JOptionPane.showMessageDialog(this, "Huésped guardado exitosamente.");
             limpiarCampos();
-            // Llamamos a la pantalla principal para que se actualice la tabla
+            
             huespedesParent.mostrarHuespedes();
             this.dispose();
         }
@@ -390,7 +387,7 @@ public void limpiarCampos() {
     jTextArea1.setText("");
 }
 public void mostrarDatosHuesped(String id, String nombre, String apellido, String correo, String telefono, String direccion) {
-    // Asignamos los valores a los campos de texto
+   
     jTextField6.setText(id);
     jTextField2.setText(nombre);
     jTextField1.setText(apellido);
@@ -398,7 +395,7 @@ public void mostrarDatosHuesped(String id, String nombre, String apellido, Strin
     jTextField4.setText(telefono);
     jTextArea1.setText(direccion);
 
-    // Hacemos que el campo de ID no se pueda editar para evitar cambios accidentales
+    
     jTextField6.setEditable(false);
 }
 
